@@ -1,35 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { ChangeEvent, FC, useState } from "react";
+import "./App.css";
+import TodoTask from "./Components/TodoTask";
+import { ITask } from "./interfaces";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App: FC = () => {
+  const [task, setTask] = useState<string>("");
+  const [deadline, setDeadline] = useState<number>(0);
+  const [todoList, setTodoList] = useState<ITask[]>([]);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    switch (event.target.name) {
+      case "task":
+        setTask(event.target.value);
+
+        break;
+      case "deadline":
+        setDeadline(Number(event.target.value));
+
+        break;
+    }
+  };
+
+  const addTask = (): void => {
+    const newTask = { name: task, deadline: deadline };
+    setTodoList([...todoList, newTask]);
+    setTask("");
+    setDeadline(0);
+  };
+
+  const completeTask = (taskName: string) => {
+    setTodoList(
+      todoList.filter((task) => {
+        return task.name !== taskName;
+      })
+    );
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <div className="App">
+      <div className="header">
+        <div className="inputContainer">
+          <input
+            type="text"
+            placeholder="Enter a Task:"
+            value={task}
+            name="task"
+            onChange={handleChange}
+          />
+          <input
+            type="number"
+            placeholder="Deadline (in days):"
+            value={deadline}
+            name="deadline"
+            onChange={handleChange}
+          />
+        </div>
 
-export default App
+        <button onClick={addTask}>Add Task</button>
+      </div>
+
+      <div className="todoList">
+        {todoList.map((task: ITask, key: number) => {
+          return <TodoTask task={task} complete={completeTask} key={key} />;
+        })}
+      </div>
+    </div>
+  );
+};
+
+export default App;
