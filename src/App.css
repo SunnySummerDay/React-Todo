@@ -15,7 +15,7 @@ body {
 
 .header {
   flex: 30%;
-  background-color: tomato;
+  background-color: rgb(10, 90, 64);
   width: 100%;
   display: flex;
   justify-content: center;
